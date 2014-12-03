@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+
+    <style>
+        span.emoji-inner
+        {
+
+            display         : inline-block;
+            text-indent     : -9999px;
+            width           : 100%;
+            height          : 100%;
+            background-size : 3000% !important;
+            vertical-align  : baseline;
+        }
+
+        span.emoji-sizer
+        {
+            line-height : 18px;
+            font-size   : 22px;
+            margin      : -2px 0;
+        }
+
+        span.emoji-outer
+        {
+
+            display : inline-block;
+            height  : 1em;
+            width   : 1em;
+        }
+
+        .bs-callout-warning
+        {
+            border-left-color : #f0ad4e;
+        }
+
+        .bs-callout
+        {
+            padding           : 20px;
+            margin            : 20px 0;
+            border            : 1px solid #eee;
+            border-left-width : 5px;
+            border-radius     : 3px;
+        }
+
+        .bs-callout-warning h4
+        {
+            color : #f0ad4e;
+        }
+
+        .bs-callout h4
+        {
+            margin-top    : 0;
+            margin-bottom : 5px;
+        }
+
+        .bs-callout p:last-child
+        {
+            margin-bottom : 0;
+        }
+
+        .bs-callout-info h4
+        {
+            color : #5bc0de;
+        }
+
+        .bs-callout-info
+        {
+            border-left-color : #5bc0de;
+        }
+    </style>
+</head>
+
+<div class="container">
+    <div class="symbols-collection" style="background:lightcyan">
+        ❄️
+        🌊
+        🌊
+        ❄️
+        ☀️
+        🌎
+        🌀
+
+
+        😄😃😀😊☺️😉😍😘😚😗😙😜😝😛😳😁😔😌😒😞😣😢😂😭😪😥😰😅😓😩😫😨😱😠😡😤😖😆😋😷😎😴😵😲😟😦😧😈👿😮😑😮😬😐😐😕😕😯😶😇
+
+
+        1️⃣2️⃣3️⃣4️⃣5️⃣6️⃣7️⃣8️⃣9️⃣0️⃣🔟🔢#️⃣🔣⬆️⬇️⬅️➡️🔠🔡🔤
+
+        🍺
+    </div>
+</div>
+
+
+<div class="container">
+
+
+    <div class="row">
+        <div class="col-md-7">
+            <div class="bs-callout bs-callout-info">
+                <h4>Analyze</h4>
+
+                <p>Use this button to analyze a single unicode symbol. It will show code points and other relevant
+                    information.</p>
+                <button id="analyze" class="btn btn-info">Analyze</button>
+                <br/>
+            </div>
+
+            <div class="bs-callout bs-callout-info">
+                <h4>Get HTML markup for :placeholder:</h4>
+
+                <p>Checks a string for any :placeholders: and returns the HTML markup for it</p>
+                <button id="fromPlaceholder" class="btn btn-info">Generate from :placeholder</button>
+                <br/><br/>
+            </div>
+
+
+            <div class="bs-callout bs-callout-info">
+                <h4>Convert string with emoji to string with :placeholder: in PHP</h4>
+
+                <p>Checks a string for any emoji and replaces them with the correct :placeholders:</p>
+                <button id="parseInPhp" class="btn btn-info">Parse string</button>
+                <br/>
+            </div>
+
+
+        </div>
+
+
+        <div class="col-md-5">
+            <h3>Log</h3>
+
+            <div id="log"
+                 style="min-height:100px; width: 100%; height:auto; background: lightcyan; border: 1px solid darkcyan">
+
+            </div>
+            <label>
+                <input type="checkbox" id="clearOnAction"/> Clear console on action
+            </label>
+        </div>
+    </div>
+
+</div>
+
+
+<script>
+    function generateFromUTF8(utfCode) {
+        var data = window['data'];
+        if (!data.hasOwnProperty(utfCode)) {
+            return 'Not found' + utfCode;
+        }
+
+        var x = data[utfCode][4];
+        var y = data[utfCode][5];
+        var rows = 30;
+        var img = 'data/emoji_apple_64_indexed_256colors.png';
+        var d = 100 / (rows - 1);
+        var b = "background: url(" + img + ");background-position:" + (d * x) + "% " + (d * y) + "%;background-size:" + rows + "00%";
+        return '<span class="emoji-outer emoji-sizer"><span class="emoji-inner" style="' + b + '"' + ">" + "</span></span>"
+    }
+
+    function findSurrogatePair(point) {
+        // assumes point > 0xffff
+        var offset = point - 0x10000,
+                lead = 0xd800 + (offset >> 10),
+                trail = 0xdc00 + (offset & 0x3ff);
+        return [lead.toString(16), trail.toString(16)];
+    }
+
+    function fixedCharCodeAt(str, idx) {
+        // ex. fixedCharCodeAt ('\uD800\uDC00', 0); // 65536
+        // ex. fixedCharCodeAt ('\uD800\uDC00', 1); // 65536
+        idx = idx || 0;
+        var code = str.charCodeAt(idx);
+        var hi, low;
+        if (0xD800 <= code && code <= 0xDBFF) { // High surrogate (could change last hex to 0xDB7F to treat high private surrogates as single characters)
+            hi = code;
+            low = str.charCodeAt(idx + 1);
+            if (isNaN(low)) {
+                return null;
+                //throw(encoding_error.invalid_surrogate_pair.replace('%pos%', idx));
+            }
+            return ((hi - 0xD800) * 0x400) + (low - 0xDC00) + 0x10000;
+        }
+        if (0xDC00 <= code && code <= 0xDFFF) { // Low surrogate
+            // We return false to allow loops to skip this iteration since should have already handled high surrogate above in the previous iteration
+            return false;
+            /*hi = str.charCodeAt(idx-1);
+             low = code;
+             return ((hi - 0xD800) * 0x400) + (low - 0xDC00) + 0x10000;*/
+        }
+        return code;
+    }
+
+    function onGenerateFromName(name) {
+        var data = window['colons'];
+        if (!data.hasOwnProperty(name)) {
+            return 'Not found: ' + name;
+        }
+        return generateFromUTF8(data[name]);
+    }
+
+
+    function analyze(val) {
+        if (!val) {
+            alert('Please enter uncode emoji');
+            return;
+        }
+
+        if ($('#clearOnAction').is(':checked')) {
+            $('#log').empty();
+        }
+
+        logLine('fixedCharCodeAt(0): 0x' + fixedCharCodeAt(val, 0).toString(16) + " (" + fixedCharCodeAt(val, 0) + ")");
+        logLine('fixedCharCodeAt(1): 0x' + fixedCharCodeAt(val, 1).toString(16) + " (" + fixedCharCodeAt(val, 1) + ")");
+
+    }
+
+    function logLine(text) {
+
+        $('#log').append(text + '<br/>');
+    }
+
+
+    function parseInPhp(string) {
+
+        $.post('server.php', {text: string})
+                .done(function (data) {
+                    logLine("Result: " + data)
+                })
+                .fail(function (error) {
+                    logLine("Could not parse in PHP: " + error)
+                });
+    }
+
+
+    $(document).ready(function () {
+
+        window.data = $.getJSON('../data/emoji.json', function (data) {
+            window.data = data;
+        });
+
+        window.data = $.getJSON('../data/emojiNames.json', function (colons) {
+            window.colons = colons;
+        });
+
+        $('button#fromPlaceholder').on('click', function () {
+            var val = prompt('Enter :placeholder:');
+            if (val) {
+                var result = onGenerateFromName(val);
+                logLine("Markup: " + result);
+            }
+        });
+
+        $('button#parseInPhp').on('click', function () {
+            var val = prompt('Enter string to parse');
+            parseInPhp(val);
+        });
+
+        $('button#analyze').on('click', function () {
+            var val = prompt('Enter unicode symbol to analyze');
+            if (val) {
+                analyze(val);
+            }
+        });
+
+    });
+</script>
+</html>

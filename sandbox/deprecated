@@ -1,0 +1,97 @@
+
+function convertAllFFS(val)
+{
+
+
+    var ranges = [
+        '\ud83c[\udf00-\udfff]', // U+1F300 to U+1F3FF
+        '\ud83d[\udc00-\ude4f]', // U+1F400 to U+1F64F
+        '\ud83d[\ude80-\udeff]', // U+1F680 to U+1F6FF
+        //'\ud7c9[\ude00-\udeff]',  // U+2600, U+28FF
+        '[\u2600-\u27BF]'  // U+2600, U+28FF
+
+    ];
+
+
+
+    return val.replace(new RegExp(ranges.join('|'), 'g'), function (match)
+    {
+        match = fixedCharCodeAt(match,0).toString(16);
+        console.log('MATCH-'+match+"-MATCH");
+        res = generateFromUTF8(match);
+        console.log('RES-'+res+"-RES");
+        return res;
+    });
+}
+
+
+function stripEmojiFromText(val)
+{
+    //return val.replace(/[\u1F60-\u1F64]|[\u2702-\u27B0]|[\u1F68-\u1F6C]|[\u1F30-\u1F70]{\u2600-\u26ff]/g, "!!");
+
+    var ranges = [
+        '\ud83c[\udf00-\udfff]', // U+1F300 to U+1F3FF
+        '\ud83d[\udc00-\ude4f]', // U+1F400 to U+1F64F
+        '\ud83d[\ude80-\udeff]', // U+1F680 to U+1F6FF
+        '\ud7c9[\ude00-\udeff]',  // U+2600, U+28FF
+        '[\u2600-\u27BF]'  // U+2600, U+28FF
+
+    ];
+
+
+    /*
+     emoji_block0 = re.compile(u'[\u2600-\u27BF]')
+     emoji_block1 = compile(u'[\uD83C][\uDF00-\uDFFF]')
+     emoji_block1b = compile(u'[\uD83D][\uDC00-\uDE4F]')
+     emoji_block2 = re.compile(u'[\uD83D][\uDE80-\uDEFF]')
+     */
+    //'\uE29D84EFB88F'
+    //F09F8C80
+    //   \u1F30E // earth
+    // \u2744\uFE0F snowflake
+
+    // text.replace(/[\u1F60-\u1F64]|[\u2702-\u27B0]|[\u1F68-\u1F6C]|[\u1F30-\u1F70]{\u2600-\u26ff]/g, "");
+
+    /*
+
+     // "": ["U+2744", "snowflake", "2744", ["-", "-"], ["", "U+E48A"], ["-", "-"], ["", "U+FE00E"]],
+
+
+     findSurrogatePair(0x2600);
+     ["d7c9", "de00"]
+
+     findSurrogatePair(0x26FF);
+     ["d7c9", "deff"]
+
+
+     */
+    return val.replace(new RegExp(ranges.join('|'), 'g'), function (match)
+    {
+        return "(EMOJI)";
+    });
+}
+
+$('button#utfAll').on('click',function(){
+        var val = $('input').val();
+        logLine("Generated <span> from UTF8 in string:" + convertAllFFS(val));
+    });
+
+    <button id="utfAll" class="btn btn-primary">HTML from emojis in string</button><br/>
+
+    $('button#convert').on('click',function(){
+            var val = $('input').val();
+            logLine("Stripped: " + stripEmojiFromText(val))
+        });
+
+
+        <button id="convert">Convert</button><br/>
+
+
+            <div class="row">
+                <div class="col-md-8">
+                    <input type="text"  class="form-control" value=""/>
+
+
+
+                </div>
+            </div>
