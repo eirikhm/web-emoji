@@ -38,7 +38,7 @@ class Emojificator
     public function text2html($text)
     {
         return preg_replace_callback(
-            '/:(\w+):/',
+            '/:(.+):/',
             function ($matches)
             {
                 $name = substr($matches[0], 1, -1);
