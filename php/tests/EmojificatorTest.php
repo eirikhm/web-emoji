@@ -113,6 +113,15 @@ EOF;
         $this->assertEquals($textLength,7);
     }
 
+    public function testThatItIgnoresUnknownStrings()
+    {
+        $path = '../../data';
+        $e = new Emojificator($path);
+
+        $this->assertEquals(':unknownabc: and :unknownabc123:',$e->text2Html(':unknownabc: and :unknownabc123:'));
+        $this->assertEquals(':unkn',$e->text2Html(':unknownabc: and :unknownabc123:',5));
+    }
+
     public function testThatMultipleEmojiTextsWithNoSpacingResolveCorrectly()
     {
         $path = '../../data';

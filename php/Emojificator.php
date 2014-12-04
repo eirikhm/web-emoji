@@ -48,7 +48,7 @@ class Emojificator
                 $code = $this->getEmojiCodeByName($name);
                 if (!$code)
                 {
-                    return $name;
+                    return $rawName;
                 }
                 else
                 {
@@ -73,7 +73,7 @@ class Emojificator
         {
             $token = $match[0];
             $position = $match[1];
-            if ($position < $length+$tmp)
+            if ($position < $length+$tmp && isset($htmlLength[$token]))
             {
                 $lengthWithElementsIncluded += $htmlLength[$token];
                 $tmp += strlen($token);
