@@ -79,21 +79,6 @@ class Emojificator
             }
         }
 
-/*
-     public function getMessageShort($len = 50)
-    {
-        $txt = strip_tags($this->message);
-        if (mb_strlen($txt) > $len)
-        {
-           $txt = htmlspecialchars_decode($txt,ENT_QUOTES);
-           $txt = mb_substr($txt, 0, $len, 'UTF-8') . '...';
-           return htmlspecialchars($txt,ENT_QUOTES);
-        }
-
-        return $txt;
-    }
- */
-
         return mb_substr($completeString,0,$lengthWithElementsIncluded,'UTF-8').'...';
     }
 
