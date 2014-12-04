@@ -35,13 +35,16 @@ class Emojificator
      * @param $text
      * @return mixed
      */
-    public function text2html($text)
+    public function text2html($text,$length = null)
     {
-        return preg_replace_callback(
-            '/:(.+):/',
-            function ($matches)
+
+        $htmlLength = [];
+        $completeString =  preg_replace_callback(
+            '/:[a-zA-Z0-9+_-]+:/',
+            function ($matches) use (&$htmlLength)
             {
-                $name = substr($matches[0], 1, -1);
+                $rawName = $matches[0];
+                $name = substr($rawName, 1, -1);
                 $code = $this->getEmojiCodeByName($name);
                 if (!$code)
                 {
@@ -49,11 +52,59 @@ class Emojificator
                 }
                 else
                 {
-                    return $this->getHtmlElementFromEmojiData($code);
+                    $htmlElement = trim($this->getHtmlElementFromEmojiData($code));
+                    $htmlLength[$rawName] = strlen($htmlElement)-1;
+                    return $htmlElement;
                 }
             },
             $text
         );
+
+        if ($length == null)
+        {
+            return $completeString;
+        }
+
+        preg_match_all('/:[a-zA-Z0-9+_-]+:/', $text, $matches2, PREG_OFFSET_CAPTURE);
+
+        $lengthWithElementsIncluded = $length;
+        $tmp = 0;
+        foreach($matches2[0] as $match)
+        {
+            $token = $match[0];
+            $position = $match[1];
+            if ($position < $length+$tmp)
+            {
+                $lengthWithElementsIncluded += $htmlLength[$token];
+                $tmp += strlen($token);
+            }
+        }
+
+
+        return substr($completeString,0,$lengthWithElementsIncluded);
+    }
+
+    public function getTextLength($text)
+    {
+        $tmp = preg_replace_callback(
+            '/:([a-zA-Z0-9+_-]+):/',
+            function ($matches)
+            {
+                $name = substr($matches[0], 1, -1);
+                $code = $this->getEmojiCodeByName($name);
+                if (!$code)
+                {
+                    return $matches[0];
+                }
+                else
+                {
+                    return 'X';
+                }
+            },
+            $text
+        );
+
+        return strlen($tmp);
     }
 
     /**
