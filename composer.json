@@ -1,0 +1,16 @@
+{
+    "name": "eirikhm/web-emoji",
+    "description": "Emojification for web",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Eirik Hoem",
+            "email": "eirikhm@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    "require-dev": {
+        "phpunit/phpunit": "~4.6@dev"
+    }
+}
