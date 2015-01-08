@@ -37,30 +37,29 @@ class Emojificator
      */
     public function text2html($text,$length = null)
     {
-
         $htmlLength = [];
         $completeString =  preg_replace_callback(
             '/:[a-zA-Z0-9+_-]+:/',
             function ($matches) use (&$htmlLength)
             {
                 $rawName = $matches[0];
-                $name = substr($rawName, 1, -1);
+                $name = mb_substr($rawName, 1, -1,'UTF-8');
                 $code = $this->getEmojiCodeByName($name);
                 if (!$code)
                 {
-                    return $name;
+                    return $rawName;
                 }
                 else
                 {
                     $htmlElement = trim($this->getHtmlElementFromEmojiData($code));
-                    $htmlLength[$rawName] = strlen($htmlElement)-1;
+                    $htmlLength[$rawName] = mb_strlen($htmlElement)-1;
                     return $htmlElement;
                 }
             },
             $text
         );
 
-        if ($length == null)
+        if ($length == null || $this->getTextLength($text) <= $length)
         {
             return $completeString;
         }
@@ -73,15 +72,14 @@ class Emojificator
         {
             $token = $match[0];
             $position = $match[1];
-            if ($position < $length+$tmp)
+            if ($position < $length+$tmp && isset($htmlLength[$token]))
             {
                 $lengthWithElementsIncluded += $htmlLength[$token];
-                $tmp += strlen($token);
+                $tmp += mb_strlen($token);
             }
         }
 
-
-        return substr($completeString,0,$lengthWithElementsIncluded);
+        return mb_substr($completeString,0,$lengthWithElementsIncluded,'UTF-8');
     }
 
     public function getTextLength($text)
@@ -90,7 +88,7 @@ class Emojificator
             '/:([a-zA-Z0-9+_-]+):/',
             function ($matches)
             {
-                $name = substr($matches[0], 1, -1);
+                $name = mb_substr($matches[0], 1, -1,'UTF-8');
                 $code = $this->getEmojiCodeByName($name);
                 if (!$code)
                 {
@@ -104,7 +102,7 @@ class Emojificator
             $text
         );
 
-        return strlen($tmp);
+        return mb_strlen($tmp);
     }
 
     /**
@@ -131,7 +129,7 @@ class Emojificator
             $pattern .= $symbolToCheck . '|';
         }
 
-        $pattern = mb_substr($pattern, 0, -1);
+        $pattern = mb_substr($pattern, 0, -1,'UTF-8');
         $pattern .= '/ui';
 
         $this->pattern = $pattern;
@@ -153,7 +151,7 @@ class Emojificator
         $hexCodeForFirstCodePoint = strtolower($hexCodeForFirstCodePoint);
         $hexCodeForFirstCodePoint2 = strtolower($hexCodeForFirstCodePoint2);
 
-        if (strlen($hexCodeForFirstCodePoint) < 4)
+        if (mb_strlen($hexCodeForFirstCodePoint) < 4)
         {
             $hexCodeForFirstCodePoint = str_pad($hexCodeForFirstCodePoint, 4, "0", STR_PAD_LEFT);
         }
@@ -163,7 +161,7 @@ class Emojificator
         {
             $hexCodeForFirstCodePoint .= '-' . $hexCodeForFirstCodePoint2;
 
-            if (strlen($hexCodeForFirstCodePoint) < 8)
+            if (mb_strlen($hexCodeForFirstCodePoint) < 8)
             {
                 $hexCodeForFirstCodePoint = str_pad($hexCodeForFirstCodePoint, 8, "0", STR_PAD_LEFT);
             }
