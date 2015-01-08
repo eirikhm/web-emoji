@@ -75,27 +75,27 @@ class EmojificatorTest extends PHPUnit_Framework_TestCase
         $path = '../../data';
         $e = new Emojificator($path);
 
-        $this->assertEquals('I want a',$e->text2html('I want a :beer:',8));
+        $this->assertEquals('I want a...',$e->text2html('I want a :beer:',8));
 
         $expected = <<< EOF
-I want a <span class="emoji-outer emoji-sizer"><span class="emoji-inner" style="background: url(/img/emoji_apple_64_indexed_256colors.png);background-position:27.586206896552% 51.724137931034%;background-size:3000%"></span></span> right
+I want a <span class="emoji-outer emoji-sizer"><span class="emoji-inner" style="background: url(/img/emoji_apple_64_indexed_256colors.png);background-position:27.586206896552% 51.724137931034%;background-size:3000%"></span></span> right...
 EOF;
        $this->assertEquals($expected,$e->text2html('I want a :beer: right now, ok?',16));
 
 
         $expected = <<< EOF
-I want a <span class="emoji-outer emoji-sizer"><span class="emoji-inner" style="background: url(/img/emoji_apple_64_indexed_256colors.png);background-position:27.586206896552% 51.724137931034%;background-size:3000%"></span></span>
+I want a <span class="emoji-outer emoji-sizer"><span class="emoji-inner" style="background: url(/img/emoji_apple_64_indexed_256colors.png);background-position:27.586206896552% 51.724137931034%;background-size:3000%"></span></span>...
 EOF;
         $this->assertEquals($expected,$e->text2html('I want a :beer: right now, ok?',10));
 
 
         $expected = <<< EOF
-<span class="emoji-outer emoji-sizer"><span class="emoji-inner" style="background: url(/img/emoji_apple_64_indexed_256colors.png);background-position:27.586206896552% 51.724137931034%;background-size:3000%"></span></span> and
+<span class="emoji-outer emoji-sizer"><span class="emoji-inner" style="background: url(/img/emoji_apple_64_indexed_256colors.png);background-position:27.586206896552% 51.724137931034%;background-size:3000%"></span></span> and...
 EOF;
         $this->assertEquals($expected,$e->text2html(':beer: and :beer: and :beer:',5));
 
         $expected = <<< EOF
-<span class="emoji-outer emoji-sizer"><span class="emoji-inner" style="background: url(/img/emoji_apple_64_indexed_256colors.png);background-position:27.586206896552% 51.724137931034%;background-size:3000%"></span></span> and <span class="emoji-outer emoji-sizer"><span class="emoji-inner" style="background: url(/img/emoji_apple_64_indexed_256colors.png);background-position:27.586206896552% 51.724137931034%;background-size:3000%"></span></span>
+<span class="emoji-outer emoji-sizer"><span class="emoji-inner" style="background: url(/img/emoji_apple_64_indexed_256colors.png);background-position:27.586206896552% 51.724137931034%;background-size:3000%"></span></span> and <span class="emoji-outer emoji-sizer"><span class="emoji-inner" style="background: url(/img/emoji_apple_64_indexed_256colors.png);background-position:27.586206896552% 51.724137931034%;background-size:3000%"></span></span>...
 EOF;
         $this->assertEquals($expected,$e->text2html(':beer: and :beer: and :beer:',7));
 
@@ -107,16 +107,14 @@ EOF;
 
     public function testThatItReportsCorrectStringLengthForEmojiString()
     {
-        $path = '../../data';
-        $e = new Emojificator($path);
+        $e = new Emojificator($this->dataPath);
         $textLength = $e->getTextLength(':beer: and :rage:');
         $this->assertEquals($textLength,7);
     }
 
     public function testThatMultipleEmojiTextsWithNoSpacingResolveCorrectly()
     {
-        $path = '../../data';
-        $e = new Emojificator($path);
+        $e = new Emojificator($this->dataPath);
         $markup = $e->text2html(':beer::beer');
         $this->assertTrue(strpos($markup, '<span') === 0, "Markup for :beer::beer: is incorrect");
 

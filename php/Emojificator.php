@@ -79,7 +79,7 @@ class Emojificator
             }
         }
 
-        return mb_substr($completeString,0,$lengthWithElementsIncluded,'UTF-8');
+        return mb_substr($completeString,0,$lengthWithElementsIncluded,'UTF-8').'...';
     }
 
     public function getTextLength($text)
