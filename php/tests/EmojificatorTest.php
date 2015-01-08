@@ -1,21 +1,26 @@
 <?php
 
-require_once '../../vendor/autoload.php';
-require_once '../Emojificator.php';
+require_once __DIR__ . '/../../vendor/autoload.php';
+require_once __DIR__ . '/../Emojificator.php';
 
 class EmojificatorTest extends PHPUnit_Framework_TestCase
 {
+    private $dataPath;
+
+    public function setUp()
+    {
+        $this->dataPath = __DIR__ . '/../../data';
+    }
+
     public function testThatInstantiates()
     {
-        $path = '../../data';
-        $e = new Emojificator($path);
+        $e = new Emojificator($this->dataPath);
         $this->assertNotNull($e);
     }
 
     public function testThatItReplacesSymbolsCorrectly()
     {
-        $path = '../../data';
-        $e = new Emojificator($path);
+        $e = new Emojificator($this->dataPath);
 
         $this->assertEquals(":sunny:", $e->emoji2text("☀️"));
         $this->assertEquals(":beer:", $e->emoji2text("🍺"));
@@ -29,17 +34,15 @@ class EmojificatorTest extends PHPUnit_Framework_TestCase
 
     public function testThatItReplacesSymbolsCorrectlyInSentence()
     {
-        $path = '../../data';
-        $e = new Emojificator($path);
+        $e = new Emojificator($this->dataPath);
         $this->assertEquals($e->emoji2text("I want a 🍺"), "I want a :beer:");
         $this->assertEquals($e->emoji2text("🍺 I want"), ":beer: I want");
     }
 
     public function testThatItCreatesHtmlForEachEntry()
     {
-        $path = '../../data';
-        $emojiData = json_decode(file_get_contents($path . '/emojiNames.json'), true);
-        $e = new Emojificator($path);
+        $emojiData = json_decode(file_get_contents($this->dataPath . '/emojiNames.json'), true);
+        $e = new Emojificator($this->dataPath);
 
         foreach ($emojiData as $name => $value) {
             $markup = $e->text2html(':' . $name . ':');
@@ -49,9 +52,8 @@ class EmojificatorTest extends PHPUnit_Framework_TestCase
 
     public function testThatItReplacesAllSymbolsCorrectly()
     {
-        $path = '../../data';
-        $emojiData = json_decode(file_get_contents($path . '/emoji.json'), true);
-        $e = new Emojificator($path);
+        $emojiData = json_decode(file_get_contents($this->dataPath . '/emoji.json'), true);
+        $e = new Emojificator($this->dataPath);
         foreach ($emojiData as $emoji)
         {
             $symbolToCheck = $emoji[0];
@@ -64,16 +66,14 @@ class EmojificatorTest extends PHPUnit_Framework_TestCase
 
     public function testThatItCreatesHtmlForCertainSymbols()
     {
-        $path = '../../data';
-        $e = new Emojificator($path);
+        $e = new Emojificator($this->dataPath);
         $markup = $e->text2html(':+1:');
         $this->assertTrue(strpos($markup, '<span') === 0, "Markup for :+1: is incorrect");
     }
 
     public function testThatItRespectLength()
     {
-        $path = '../../data';
-        $e = new Emojificator($path);
+        $e = new Emojificator($this->dataPath);
 
         $this->assertEquals('I want a...',$e->text2html('I want a :beer:',8));
 
