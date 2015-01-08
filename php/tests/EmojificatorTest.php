@@ -119,4 +119,18 @@ EOF;
         $this->assertTrue(strpos($markup, '<span') === 0, "Markup for :beer::beer: is incorrect");
 
     }
+
+    public function testThatItDetectsPresenceOfEmoji()
+    {
+        $e = new Emojificator($this->dataPath);
+        $this->assertTrue($e->textContainsEmoji("Contains 🍺"));
+    }
+
+    public function testThatItDontDoFalseEmojiPresenceDetects()
+    {
+        $e = new Emojificator($this->dataPath);
+        $this->assertFalse($e->textContainsEmoji("Contains beer"));
+        $this->assertFalse($e->textContainsEmoji("Contains :beer:"));
+        $this->assertFalse($e->textContainsEmoji("Contains æ"));
+    }
 }

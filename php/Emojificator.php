@@ -115,6 +115,16 @@ class Emojificator
         return $this->substituteEmojiInText($this->buildDehancePattern(), $text);
     }
 
+    /**
+     * Detect if text contains one or more emojis
+     * @param $text
+     * @return bool
+     */
+    public function textContainsEmoji($text)
+    {
+        return $this->substituteEmojiInText($this->buildDehancePattern(), $text) !== $text;
+    }
+
     private function buildDehancePattern()
     {
         if ($this->pattern)
