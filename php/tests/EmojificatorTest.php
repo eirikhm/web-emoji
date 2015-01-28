@@ -133,4 +133,20 @@ EOF;
         $this->assertFalse($e->textContainsEmoji("Contains :beer:"));
         $this->assertFalse($e->textContainsEmoji("Contains æ"));
     }
+
+    public function testWillNotChangeLocale()
+    {
+        // Get the original locale
+        $currentLocale = setlocale(LC_NUMERIC,0);
+
+        setlocale(LC_NUMERIC, 'nb_NO.utf8');
+
+        $e = new Emojificator($this->dataPath);
+        $e->text2html(':beer:');
+
+        $this->assertEquals('nb_NO.utf8', setlocale(LC_NUMERIC,0));
+
+        // Reset locale back to original
+        setlocale(LC_NUMERIC, $currentLocale);
+    }
 }
