@@ -115,6 +115,16 @@ class Emojificator
         return $this->substituteEmojiInText($this->buildDehancePattern(), $text);
     }
 
+    /**
+     * Detect if text contains one or more emojis
+     * @param $text
+     * @return bool
+     */
+    public function textContainsEmoji($text)
+    {
+        return $this->substituteEmojiInText($this->buildDehancePattern(), $text) !== $text;
+    }
+
     private function buildDehancePattern()
     {
         if ($this->pattern)
@@ -230,7 +240,7 @@ class Emojificator
         $img = '/img/emoji_apple_64_indexed_256colors.png';
         $d = 100 / ($rows - 1);
         $b = "background: url(" . $img . ");background-position:" . ($d * $x) . "% " . ($d * $y) . "%;background-size:" . $rows . "00%";
-        return '<span class="emoji-outer emoji-sizer"><span class="emoji-inner" style="' . $b . '"' . ">" . "</span></span>";
         setlocale(LC_NUMERIC, $locale);
+        return '<span class="emoji-outer emoji-sizer"><span class="emoji-inner" style="' . $b . '"' . ">" . "</span></span>";
     }
 }

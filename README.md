@@ -1,9 +1,6 @@
 web-emoji
 =========
 
-No code here yet, working on cleaning it up!
-
-
 This project brings emoji support for websites and mobile web application. 
 
 The general idea is to let server-side code deal with all things unicode. The clients just pass over the emojis,
@@ -15,10 +12,11 @@ The clients are responsible for replacing :beer: with something that looks like 
 PHP
 ====
 The PHP class supports conversion from emoji to :beer:, and from :beer: to HTML.
-
+```php
 $e = new Emojificator('data/');
 $e->emoji2text("Are you up for a 🍺?"); // Are you up for a :beer:?
 $e->text2html("Are you up for a :beer:?"); // Are you up for a <span></span>
+```
 
 JavaScript
 ==========
