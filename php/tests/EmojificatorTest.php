@@ -149,4 +149,16 @@ EOF;
         // Reset locale back to original
         setlocale(LC_NUMERIC, $currentLocale);
     }
+
+    public function testThatEmptyStringDoesNotIdentifyAsContainingEmoji()
+    {
+        $e = new Emojificator($this->dataPath);
+        $this->assertFalse($e->textContainsEmoji(''));
+    }
+
+    public function testThatNullDoesNotIdentifyAsContainingEmoji()
+    {
+        $e = new Emojificator($this->dataPath);
+        $this->assertFalse($e->textContainsEmoji(null));
+    }
 }

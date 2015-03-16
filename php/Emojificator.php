@@ -122,6 +122,10 @@ class Emojificator
      */
     public function textContainsEmoji($text)
     {
+        if(!$text)
+        {
+            return false;
+        }
         return $this->substituteEmojiInText($this->buildDehancePattern(), $text) !== $text;
     }
 
