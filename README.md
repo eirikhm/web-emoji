@@ -1,3 +1,6 @@
+You should check out emojione at https://github.com/Ranks/emojione
+==================================================================
+
 web-emoji
 =========
 
