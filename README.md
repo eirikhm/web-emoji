@@ -1,7 +1,7 @@
 You should check out emojione at https://github.com/Ranks/emojione
 ==================================================================
 
-web-emoji
+web-emoji-An amazing Project
 =========
 
 This project brings emoji support for websites and mobile web applications. 
